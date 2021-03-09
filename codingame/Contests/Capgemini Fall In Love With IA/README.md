@@ -1,6 +1,7 @@
 ﻿Rank:
 * **3**/47 globally
 * **2**/9 in Poland
+
 Competition period:
 * *March 5th, 2021 2PM CET – March 8th, 2021 2PM CET*
 
