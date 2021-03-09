@@ -30,13 +30,23 @@ Your team will also acquire 1 point of **mana** per damage dealt to a monster. M
 | CONTROL | <entityId> <x> <y> | 10        | Override the target's next action with a step towards the given coordinates. | 2200 |
 
 A hero may only cast a spell on entities that are within the spell's range from the hero.
+
 ## WIND Example
+
 A hero uses WIND at position (6000, 6000) towards (6000, 5000).
+
 ![](https://www.codingame.com/servlet/fileservlet?id=20669980430629)
+
 There are 2 monsters within 1280 units around the hero.
+
 ![](https://www.codingame.com/servlet/fileservlet?id=20669992024930)
-WIND 6000 5000 The vector (0,-1) describes the direction between the hero and the target point. ![](https://www.codingame.com/servlet/fileservlet?id=20669974783504)
+
+WIND 6000 5000 The vector (0,-1) describes the direction between the hero and the target point.
+
+![](https://www.codingame.com/servlet/fileservlet?id=20669974783504)
+
 The monsters all move 2200 in the direction defined by the vector.
+
 ## Victory Conditions
 * Outlive your opponent for **220 turns**.
 * Have more base health points than your opponent after **220 turns**. 
