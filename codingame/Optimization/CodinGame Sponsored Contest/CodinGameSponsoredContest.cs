@@ -12,7 +12,7 @@ namespace Codingame
  * Auto-generated code below aims at helping you parse
  * the standard input according to the problem statement.
  **/
-    class Player
+    class CodinGameSponsoredContest
     {
         static void Main(string[] args)
         {
