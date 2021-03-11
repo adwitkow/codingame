@@ -16,10 +16,8 @@ namespace Codingame
     {
         static void Main(string[] args)
         {
-            var random = new Random();
-
-            int mapWidth = int.Parse(Console.ReadLine());
             int mapHeight = int.Parse(Console.ReadLine());
+            int mapWidth = int.Parse(Console.ReadLine());
 
             int playerCount = int.Parse(Console.ReadLine());
 
@@ -33,37 +31,31 @@ namespace Codingame
                 char down = char.Parse(Console.ReadLine());
                 char left = char.Parse(Console.ReadLine());
 
-                Console.Error.WriteLine("Updating enemies");
+                Console.Error.WriteLine($"Map: {mapWidth}x{mapHeight}");
+
                 for (int i = 0; i < playerCount - 1; i++)
                 {
                     string[] inputs = Console.ReadLine().Split(' ');
                     int enemyX = int.Parse(inputs[0]);
                     int enemyY = int.Parse(inputs[1]);
-                    var v = new Vector2(enemyX - 1, enemyY - 1);
+                    var v = new Vector2(enemyX, enemyY);
                     map.UpdateEnemy(i, v);
                 }
 
                 var playerInputs = Console.ReadLine().Split(' ');
-                var player = new Vector2(int.Parse(playerInputs[0]) - 1, int.Parse(playerInputs[1]) - 1);
+                var player = new Vector2(int.Parse(playerInputs[0]), int.Parse(playerInputs[1]));
 
                 map.UpdatePlayer(player);
                 map.UpdateSurroundings(player, up, right, down, left);
 
-                Console.Error.WriteLine("Displaying map");
-                Console.Error.WriteLine(map.DisplayMap(5));
-                // check availability of the 
+                Console.Error.WriteLine(map.DisplayMap(8));
 
-                // Write an action using Console.WriteLine()
-                // To debug: Console.Error.WriteLine("Debug messages...");
                 var directions = map.GetAvailableMoves();
                 Console.Error.WriteLine($"Available directions: {string.Join(", ", directions)}");
-                Console.WriteLine(directions.ElementAt(random.Next(0, directions.Count() - 1)).Command);
 
-                // A = Prawo
-                // B = Wait
-                // C = Gora
-                // D = Dol
-                // E = Lewo
+                var nextMove = map.GetNextMove();
+                Console.Error.WriteLine($"Next move: {nextMove.Name}");
+                Console.WriteLine(nextMove.Command);
             }
         }
 
@@ -77,7 +69,6 @@ namespace Codingame
 
             private bool?[,] Nodes { get; }
             private readonly Vector2[] Enemies;
-            private Vector2 PreviousPosition;
             private Vector2 PlayerPosition;
 
             public Map(int width, int height, int enemyCount)
@@ -90,10 +81,9 @@ namespace Codingame
             public void UpdatePlayer(Vector2 player)
             {
                 Console.Error.WriteLine($"Updating player: {player}");
-                this.PreviousPosition = PlayerPosition;
                 this.PlayerPosition = player;
 
-                SetNode((int)player.X, (int)player.Y, true);
+                SetNodeValue((int)player.X, (int)player.Y, true);
             }
 
             public void UpdateSurroundings(Vector2 center, char up, char right, char down, char left)
@@ -101,20 +91,17 @@ namespace Codingame
                 var x = (int)center.X;
                 var y = (int)center.Y;
 
-                Console.Error.WriteLine($"Updating surroundings: {center}");
-
-                SetNode(x, y + 1, IsTraversible(down));
-                SetNode(x + 1, y, IsTraversible(right));
-                SetNode(x, y - 1, IsTraversible(up));
-                SetNode(x - 1, y, IsTraversible(left));
+                SetNodeValue(x, y + 1, IsTraversible(down));
+                SetNodeValue(x + 1, y, IsTraversible(right));
+                SetNodeValue(x, y - 1, IsTraversible(up));
+                SetNodeValue(x - 1, y, IsTraversible(left));
             }
 
             public void UpdateEnemy(int index, Vector2 position)
             {
-                Console.Error.WriteLine($"Updating enemy {index}: {position}");
                 Enemies[index] = position;
 
-                SetNode((int)position.X, (int)position.Y, true);
+                SetNodeValue((int)position.X, (int)position.Y, true);
             }
 
             public string DisplayMap(int radius)
@@ -127,15 +114,14 @@ namespace Codingame
                 var startX = playerX - radius;
                 var startY = playerY - radius;
 
-                Console.Error.WriteLine("Converting the map");
+                Console.Error.WriteLine($"Converting the map (startX: {startX}, startY: {startY})");
 
                 for (int x = startX; x < playerX + radius; x++)
                 {
                     for (int y = startY; y < playerY + radius; y++)
                     {
-                        var node = GetNode(x, y);
-                        //var node = Nodes[x, y];
-                        var v = new Vector2(x, y);
+                        var node = GetNodeValue(x, y);
+                        var v = GetNode(x, y);
                         string symbol;
                         if (PlayerPosition == v)
                         {
@@ -160,7 +146,8 @@ namespace Codingame
                 {
                     for (int x = 0; x < results.GetLength(0); x++)
                     {
-                        builder.Append(results[x % results.GetLength(0), y % results.GetLength(1)]);
+                        var node = GetNode(x, y);
+                        builder.Append(results[(int)node.X, (int)node.Y]);
                     }
                     builder.Append(Environment.NewLine);
                 }
@@ -174,22 +161,22 @@ namespace Codingame
                 var x = (int)PlayerPosition.X;
                 var y = (int)PlayerPosition.Y;
 
-                if (GetNode(x + 1, y).Value)
+                if (GetNodeValue(x + 1, y).Value)
                 {
                     directions.Add(Direction.Right);
                 }
 
-                if (GetNode(x, y + 1).Value)
+                if (GetNodeValue(x, y + 1).Value)
                 {
                     directions.Add(Direction.Down);
                 }
 
-                if (GetNode(x - 1, y).Value)
+                if (GetNodeValue(x - 1, y).Value)
                 {
                     directions.Add(Direction.Left);
                 }
 
-                if (GetNode(x, y - 1).Value)
+                if (GetNodeValue(x, y - 1).Value)
                 {
                     directions.Add(Direction.Up);
                 }
@@ -197,14 +184,133 @@ namespace Codingame
                 return directions;
             }
 
-            private bool? GetNode(int x, int y)
+            public Direction GetNextMove()
             {
-                return Nodes[x % Nodes.GetLength(0), y % Nodes.GetLength(1)];
+                var undiscoveredPoints = new List<Vector2>();
+
+                for (int x = 0; x < Nodes.GetLength(0); x++)
+                {
+                    for (int y = 0; y < Nodes.GetLength(1); y++)
+                    {
+                        if (!GetNodeValue(x, y).HasValue && HasEmptyNeighbours(x, y))
+                        {
+                            undiscoveredPoints.Add(new Vector2(x, y));
+                        }
+                    }
+                }
+
+                var ordered = undiscoveredPoints
+                    .OrderBy(p => Vector2.DistanceSquared(p, PlayerPosition));
+
+                var pointsQueue = new Queue<Vector2>(ordered);
+
+                Direction direction = null;
+                while (direction == null && pointsQueue.Any())
+                {
+                    Vector2 closest = pointsQueue.Dequeue();
+                    direction = BFS(PlayerPosition, closest);
+                }
+
+                return direction;
             }
 
-            private void SetNode(int x, int y, bool value)
+            private Direction BFS(Vector2 start, Vector2 goal)
             {
-                Nodes[x % Nodes.GetLength(0), y % Nodes.GetLength(1)] = value;
+                // TODO: Move the pathfinding logic to a separate class
+                var queue = new Queue<Pathable>();
+                var visited = new HashSet<Vector2>();
+
+                Console.Error.WriteLine($"Finding path to {goal}");
+
+                queue.Enqueue(new Pathable(start));
+
+                while (queue.Any())
+                {
+                    var current = queue.Dequeue();
+
+                    if (visited.Contains(current.Point))
+                    {
+                        continue;
+                    }
+
+                    visited.Add(current.Point);
+
+                    if (current.Point == goal)
+                    {
+                        Console.Error.WriteLine($"Path found: {string.Join(", ", current.Directions.Select(d => d.Name))}");
+                        return current.Directions.Dequeue();
+                    }
+
+                    var x = (int)current.Point.X;
+                    var y = (int)current.Point.Y;
+
+                    if (IsEmpty(x + 1, y))
+                    {
+                        var point = GetNode(x + 1, y);
+                        queue.Enqueue(new Pathable(point, current, Direction.Right));
+                    }
+
+                    if (IsEmpty(x - 1, y))
+                    {
+                        var point = GetNode(x - 1, y);
+                        queue.Enqueue(new Pathable(point, current, Direction.Left));
+                    }
+
+                    if (IsEmpty(x, y + 1))
+                    {
+                        var point = GetNode(x, y + 1);
+                        queue.Enqueue(new Pathable(point, current, Direction.Down));
+                    }
+
+                    if (IsEmpty(x, y - 1))
+                    {
+                        var point = GetNode(x, y - 1);
+                        queue.Enqueue(new Pathable(point, current, Direction.Up));
+                    }
+                }
+
+                return null;
+            }
+
+            private bool HasEmptyNeighbours(int x, int y)
+            {
+                return IsEmpty(x + 1, y)
+                    || IsEmpty(x - 1, y)
+                    || IsEmpty(x, y + 1)
+                    || IsEmpty(x, y - 1);
+            }
+
+            private bool IsEmpty(int x, int y)
+            {
+                var node = GetNodeValue(x, y);
+                return !node.HasValue || node.Value;
+            }
+
+            private bool? GetNodeValue(int x, int y)
+            {
+                var node = GetNode(x, y);
+                return Nodes[(int)node.X, (int)node.Y];
+            }
+
+            private Vector2 GetNode(int x, int y)
+            {
+                if (x < 1)
+                {
+                    x = Nodes.GetLength(0) + x;
+                }
+
+                if (y < 1)
+                {
+                    y = Nodes.GetLength(1) + y;
+                }
+
+                return new Vector2(x % Nodes.GetLength(0), y % Nodes.GetLength(1));
+            }
+
+            private void SetNodeValue(int x, int y, bool value)
+            {
+                var node = GetNode(x, y);
+                Nodes[(int)node.X, (int)node.Y] = value;
             }
 
             private string ConvertNodeToSymbol(bool? node)
@@ -226,6 +332,26 @@ namespace Codingame
             private bool IsTraversible(char ch)
             {
                 return ch != '#';
+            }
+        }
+
+        public class Pathable
+        {
+            public Vector2 Point { get; }
+            public Queue<Direction> Directions { get; }
+
+            public Pathable(Vector2 point)
+            {
+                this.Point = point;
+                this.Directions = new Queue<Direction>();
+            }
+
+            public Pathable(Vector2 point, Pathable parent, Direction direction)
+            {
+                this.Point = point;
+                this.Directions = new Queue<Direction>(parent.Directions);
+                
+                Directions.Enqueue(direction);
             }
         }
 
