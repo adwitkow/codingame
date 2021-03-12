@@ -46,12 +46,14 @@
   <ItemGroup>
     <Compile Include="Contests\Capgemini Fall In Love With IA\FallInLoveWithIA.cs" />
     <Compile Include="Optimization\CodinGame Sponsored Contest\CodinGameSponsoredContest.cs" />
+    <Compile Include="Optimization\Mars Lander\MarsLander.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
     <None Include="Contests\Capgemini Fall In Love With IA\README.md" />
     <None Include="Optimization\CodinGame Sponsored Contest\README.md" />
+    <None Include="Optimization\Mars Lander\README.md" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
