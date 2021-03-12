@@ -31,7 +31,7 @@ namespace Codingame
                 char down = char.Parse(Console.ReadLine());
                 char left = char.Parse(Console.ReadLine());
 
-                Console.Error.WriteLine($"Map: {mapWidth}x{mapHeight}");
+                map.DisplayMap(10);
 
                 for (int i = 0; i < playerCount - 1; i++)
                 {
@@ -48,19 +48,20 @@ namespace Codingame
                 map.UpdatePlayer(player);
                 map.UpdateSurroundings(player, up, right, down, left);
 
-                Console.Error.WriteLine(map.DisplayMap(8));
-
                 var directions = map.GetAvailableMoves();
                 Console.Error.WriteLine($"Available directions: {string.Join(", ", directions)}");
 
                 var nextMove = map.GetNextMove();
                 Console.Error.WriteLine($"Next move: {nextMove.Name}");
+
                 Console.WriteLine(nextMove.Command);
             }
         }
 
         public class Map
         {
+            private static readonly Random random = new Random();
+
             private static readonly string Enemy = "EE";
             private static readonly string Player = "()";
             private static readonly string Wall = "[]";
@@ -104,8 +105,10 @@ namespace Codingame
                 SetNodeValue((int)position.X, (int)position.Y, true);
             }
 
-            public string DisplayMap(int radius)
+            public void DisplayMap(int radius)
             {
+                // This needs to be void since codinGame culls longer console messages
+
                 int playerX = (int)PlayerPosition.X;
                 int playerY = (int)PlayerPosition.Y;
 
@@ -139,20 +142,16 @@ namespace Codingame
                     }
                 }
 
-                Console.Error.WriteLine("Building the string");
-
-                var builder = new StringBuilder();
                 for (int y = 0; y < results.GetLength(1); y++)
                 {
+                    var builder = new StringBuilder();
                     for (int x = 0; x < results.GetLength(0); x++)
                     {
                         var node = GetNode(x, y);
                         builder.Append(results[(int)node.X, (int)node.Y]);
                     }
-                    builder.Append(Environment.NewLine);
+                    Console.Error.WriteLine(builder.ToString());
                 }
-
-                return builder.ToString();
             }
 
             public IEnumerable<Direction> GetAvailableMoves()
@@ -204,14 +203,128 @@ namespace Codingame
 
                 var pointsQueue = new Queue<Vector2>(ordered);
 
+                var tries = 0;
                 Direction direction = null;
                 while (direction == null && pointsQueue.Any())
                 {
                     Vector2 closest = pointsQueue.Dequeue();
                     direction = BFS(PlayerPosition, closest);
+
+                    if (tries > 10)
+                    {
+                        return GetPanicMove();
+                    }
+
+                    tries++;
+                }
+
+                if (direction == null)
+                {
+                    return GetPanicMove();
                 }
 
                 return direction;
+            }
+
+            public Direction GetPanicMove()
+            {
+                var x = (int)PlayerPosition.X;
+                var y = (int)PlayerPosition.Y;
+
+                // TODO: CLEAN THIS UP LMAOOOO
+                var roll = random.Next(0, 4);
+                switch(roll)
+                {
+                    case 0:
+                        if (IsEmpty(x + 1, y) && IsSafe(x + 1, y))
+                        {
+                            return Direction.Right;
+                        }
+
+                        if (IsEmpty(x - 1, y) && IsSafe(x - 1, y))
+                        {
+                            return Direction.Left;
+                        }
+
+                        if (IsEmpty(x, y + 1) && IsSafe(x, y + 1))
+                        {
+                            return Direction.Down;
+                        }
+
+                        if (IsEmpty(x, y - 1) && IsSafe(x, y - 1))
+                        {
+                            return Direction.Up;
+                        }
+                        break;
+                    case 1:
+
+                        if (IsEmpty(x - 1, y) && IsSafe(x - 1, y))
+                        {
+                            return Direction.Left;
+                        }
+
+                        if (IsEmpty(x, y + 1) && IsSafe(x, y + 1))
+                        {
+                            return Direction.Down;
+                        }
+
+                        if (IsEmpty(x, y - 1) && IsSafe(x, y - 1))
+                        {
+                            return Direction.Up;
+                        }
+
+                        if (IsEmpty(x + 1, y) && IsSafe(x + 1, y))
+                        {
+                            return Direction.Right;
+                        }
+                        break;
+                    case 2:
+                        if (IsEmpty(x, y + 1) && IsSafe(x, y + 1))
+                        {
+                            return Direction.Down;
+                        }
+
+                        if (IsEmpty(x, y - 1) && IsSafe(x, y - 1))
+                        {
+                            return Direction.Up;
+                        }
+
+                        if (IsEmpty(x + 1, y) && IsSafe(x + 1, y))
+                        {
+                            return Direction.Right;
+                        }
+
+                        if (IsEmpty(x - 1, y) && IsSafe(x - 1, y))
+                        {
+                            return Direction.Left;
+                        }
+                        break;
+                    case 3:
+                        if (IsEmpty(x, y - 1) && IsSafe(x, y - 1))
+                        {
+                            return Direction.Up;
+                        }
+
+                        if (IsEmpty(x + 1, y) && IsSafe(x + 1, y))
+                        {
+                            return Direction.Right;
+                        }
+
+                        if (IsEmpty(x - 1, y) && IsSafe(x - 1, y))
+                        {
+                            return Direction.Left;
+                        }
+
+                        if (IsEmpty(x, y + 1) && IsSafe(x, y + 1))
+                        {
+                            return Direction.Down;
+                        }
+                        break;
+                    default:
+                        return Direction.None;
+                }
+
+                return Direction.None;
             }
 
             private Direction BFS(Vector2 start, Vector2 goal)
@@ -244,25 +357,25 @@ namespace Codingame
                     var x = (int)current.Point.X;
                     var y = (int)current.Point.Y;
 
-                    if (IsEmpty(x + 1, y))
+                    if (IsEmpty(x + 1, y) && IsSafe(x + 1, y))
                     {
                         var point = GetNode(x + 1, y);
                         queue.Enqueue(new Pathable(point, current, Direction.Right));
                     }
 
-                    if (IsEmpty(x - 1, y))
+                    if (IsEmpty(x - 1, y) && IsSafe(x - 1, y))
                     {
                         var point = GetNode(x - 1, y);
                         queue.Enqueue(new Pathable(point, current, Direction.Left));
                     }
 
-                    if (IsEmpty(x, y + 1))
+                    if (IsEmpty(x, y + 1) && IsSafe(x, y + 1))
                     {
                         var point = GetNode(x, y + 1);
                         queue.Enqueue(new Pathable(point, current, Direction.Down));
                     }
 
-                    if (IsEmpty(x, y - 1))
+                    if (IsEmpty(x, y - 1) && IsSafe(x, y - 1))
                     {
                         var point = GetNode(x, y - 1);
                         queue.Enqueue(new Pathable(point, current, Direction.Up));
@@ -278,6 +391,20 @@ namespace Codingame
                     || IsEmpty(x - 1, y)
                     || IsEmpty(x, y + 1)
                     || IsEmpty(x, y - 1);
+            }
+
+            private bool IsSafe(int x, int y)
+            {
+                var vector = new Vector2(x, y);
+                foreach (var enemy in Enemies)
+                {
+                    if (enemy == vector || Vector2.DistanceSquared(enemy, vector) < 2)
+                    {
+                        return false;
+                    }
+                }
+
+                return true;
             }
 
             private bool IsEmpty(int x, int y)
@@ -350,7 +477,7 @@ namespace Codingame
             {
                 this.Point = point;
                 this.Directions = new Queue<Direction>(parent.Directions);
-                
+
                 Directions.Enqueue(direction);
             }
         }
