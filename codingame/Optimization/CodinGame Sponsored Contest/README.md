@@ -1,6 +1,4 @@
-﻿TODO: Convert the rule systems and descriptions to markdown.
-
-This is pretty much just a reverse engineering puzzle with a pinch of algorithm optimization for a better rank.
+Note: This is pretty much just a reverse engineering puzzle with a pinch of algorithm optimization for a better rank. I think I should try implementing MCTS here when I have time since the enemies use different patterns which are difficult to reliably predict.
 
 ## The Goal
 
@@ -14,17 +12,17 @@ We will also participate in this challenge, do you think you can beat us?
 
 The possible actions are A, B, C, D and E.
  
-##### Victory Conditions
+#### Victory Conditions
 
 Do not lose.
  
-##### Lose Conditions
+#### Lose Conditions
 
 Time out or wrong output.
 
 ## Game Input
 
-##### Initialization input
+#### Initialization input
 
 **Line 1**: an integer.
 
@@ -32,7 +30,7 @@ Time out or wrong output.
 
 **Line 3**: an integer.
 
-##### Input for one game turn
+#### Input for one game turn
 
 **Line 1**: a character.
 
@@ -44,10 +42,10 @@ Time out or wrong output.
 
 **Next few lines**: two integers on each line.
 
-##### Output for one game turn
+#### Output for one game turn
 
 A **single line** containing one of the following actions: A, B, C, D or E
 
-##### Constraints
+#### Constraints
 
 Duration of one game turn: 100 ms
