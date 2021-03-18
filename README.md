@@ -5,3 +5,4 @@ My solutions to the challenges/contests available over at https://www.codingame.
 ## Optimization
 * [CodinGame Sponsored Contest](../../tree/master/codingame/Optimization/CodinGame%20Sponsored%20Contest)
 * [Mars Lander](../../tree/master/codingame/Optimization/Mars%20Lander)
+* [Code of the Rings](../../tree/master/codingame/Optimization/Code%20of%20the%20Rings)
