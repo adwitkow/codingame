@@ -1,16 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace Codingame
 {
-    class CodeOfTheRings
+    internal class CodeOfTheRings
     {
-        static void Main(string[] args)
+        private static void Main(string[] args)
         {
-            string magicPhrase = Console.ReadLine();
+            var magicPhrase = Console.ReadLine();
 
             var solver = new MagicSolver();
             // Write an action using Console.WriteLine()
@@ -20,7 +18,7 @@ namespace Codingame
             Console.WriteLine(solution);
         }
 
-        class MagicSolver
+        private class MagicSolver
         {
             private readonly Stone[] Stones;
             private readonly Bilbo Bilbo;
@@ -29,7 +27,7 @@ namespace Codingame
             {
                 Bilbo = new Bilbo();
                 Stones = new Stone[Constants.StoneCount];
-                for (int i = 0; i < Constants.StoneCount; i++)
+                for (var i = 0; i < Constants.StoneCount; i++)
                 {
                     Stones[i] = new Stone(i);
                 }
@@ -64,7 +62,7 @@ namespace Codingame
             }
         }
 
-        class Bilbo
+        private class Bilbo
         {
             private int currentPosition;
 
@@ -135,7 +133,7 @@ namespace Codingame
             }
         }
 
-        class Stone
+        private class Stone
         {
             public readonly int Position;
 
@@ -144,7 +142,7 @@ namespace Codingame
 
             public Stone(int position)
             {
-                this.Position = position;
+                Position = position;
             }
 
             public int DistanceTo(char ch)
@@ -194,13 +192,13 @@ namespace Codingame
 
             private char NextLetter()
             {
-                if (this.CurrentIndex < Constants.Alphabet.Length - 1)
+                if (CurrentIndex < Constants.Alphabet.Length - 1)
                 {
-                    this.CurrentIndex += 1;
+                    CurrentIndex += 1;
                 }
                 else
                 {
-                    this.CurrentIndex = 0;
+                    CurrentIndex = 0;
                 }
 
                 return Constants.NextLetter;
@@ -208,20 +206,20 @@ namespace Codingame
 
             private char PreviousLetter()
             {
-                if (this.CurrentIndex > 0)
+                if (CurrentIndex > 0)
                 {
-                    this.CurrentIndex -= 1;
+                    CurrentIndex -= 1;
                 }
                 else
                 {
-                    this.CurrentIndex = Constants.Alphabet.Length - 1;
+                    CurrentIndex = Constants.Alphabet.Length - 1;
                 }
 
                 return Constants.PreviousLetter;
             }
         }
 
-        static class Constants
+        private static class Constants
         {
             public static readonly char[] Alphabet = " ABCDEFGHIJKLMNOPQRSTUVWXYZ".ToCharArray();
             public static readonly int StoneCount = 30;

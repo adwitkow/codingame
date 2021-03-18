@@ -2,30 +2,28 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Codingame
 {
-    class MarsLander
+    internal class MarsLander
     {
         public static readonly double Gravity = 3.711d;
         public static Vector2 LandingPoint1 = Vector2.Zero;
         public static Vector2 LandingPoint2 = Vector2.Zero;
         public static ICollection<Vector2> LandPoints;
 
-        static void Main(string[] args)
+        private static void Main(string[] args)
         {
             var lander = new Lander();
             LandPoints = new List<Vector2>();
 
             string[] inputs;
-            int N = int.Parse(Console.ReadLine()); // the number of points used to draw the surface of Mars.
-            for (int i = 0; i < N; i++)
+            var N = int.Parse(Console.ReadLine()); // the number of points used to draw the surface of Mars.
+            for (var i = 0; i < N; i++)
             {
                 inputs = Console.ReadLine().Split(' ');
-                int landX = int.Parse(inputs[0]); // X coordinate of a surface point. (0 to 6999)
-                int landY = int.Parse(inputs[1]); // Y coordinate of a surface point. By linking all the points together in a sequential fashion, you form the surface of Mars.
+                var landX = int.Parse(inputs[0]); // X coordinate of a surface point. (0 to 6999)
+                var landY = int.Parse(inputs[1]); // Y coordinate of a surface point. By linking all the points together in a sequential fashion, you form the surface of Mars.
 
                 var currentPoint = new Vector2(landX, landY);
 
@@ -46,10 +44,10 @@ namespace Codingame
             while (true)
             {
                 inputs = Console.ReadLine().Split(' ');
-                int X = int.Parse(inputs[0]);
-                int Y = int.Parse(inputs[1]);
-                int HS = int.Parse(inputs[2]); // the horizontal speed (in m/s), can be negative.
-                int VS = int.Parse(inputs[3]); // the vertical speed (in m/s), can be negative.
+                var X = int.Parse(inputs[0]);
+                var Y = int.Parse(inputs[1]);
+                var HS = int.Parse(inputs[2]); // the horizontal speed (in m/s), can be negative.
+                var VS = int.Parse(inputs[3]); // the vertical speed (in m/s), can be negative.
 
                 lander.SetPosition(X, Y);
                 lander.SetSpeed(HS, VS);
@@ -81,7 +79,7 @@ namespace Codingame
             }
         }
 
-        class Lander
+        private class Lander
         {
             private static readonly Vector2 MaxSpeed = new Vector2(20, 40);
 

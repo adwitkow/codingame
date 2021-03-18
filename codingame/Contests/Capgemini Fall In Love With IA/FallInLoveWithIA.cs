@@ -1,18 +1,15 @@
 ﻿namespace Hackathon
 {
     using System;
-    using System.Linq;
-    using System.IO;
-    using System.Text;
-    using System.Numerics;
-    using System.Collections;
     using System.Collections.Generic;
+    using System.Linq;
+    using System.Numerics;
 
     /**
      * Auto-generated code below aims at helping you parse
      * the standard input according to the problem statement.
      **/
-    class FallInLoveWithIA
+    internal class FallInLoveWithIA
     {
         public static readonly Vector2 MapBounds = new Vector2(17630, 9000);
         public static float DistanceToMiddleSquared = 0;
@@ -22,7 +19,7 @@
         public static Base PlayerBase;
         public static Base EnemyBase;
 
-        static void Main(string[] args)
+        private static void Main(string[] args)
         {
             string[] inputs;
 
@@ -42,26 +39,26 @@
                 PlayerBase.UpdateHealthAndMana(Console.ReadLine());
                 EnemyBase.UpdateHealthAndMana(Console.ReadLine());
 
-                int visibleEntityCount = int.Parse(Console.ReadLine());
+                var visibleEntityCount = int.Parse(Console.ReadLine());
 
                 var heroes = new List<Entity>();
                 var opponents = new List<Entity>();
                 var monsters = new List<Entity>();
 
-                for (int i = 0; i < visibleEntityCount; i++)
+                for (var i = 0; i < visibleEntityCount; i++)
                 {
                     inputs = Console.ReadLine().Split(' ');
-                    int id = int.Parse(inputs[0]);
-                    int type = int.Parse(inputs[1]);
-                    int x = int.Parse(inputs[2]);
-                    int y = int.Parse(inputs[3]);
-                    int shieldLife = int.Parse(inputs[4]);
-                    int isControlled = int.Parse(inputs[5]);
-                    int health = int.Parse(inputs[6]);
-                    int vx = int.Parse(inputs[7]);
-                    int vy = int.Parse(inputs[8]);
-                    int nearBase = int.Parse(inputs[9]);
-                    int threatFor = int.Parse(inputs[10]);
+                    var id = int.Parse(inputs[0]);
+                    var type = int.Parse(inputs[1]);
+                    var x = int.Parse(inputs[2]);
+                    var y = int.Parse(inputs[3]);
+                    var shieldLife = int.Parse(inputs[4]);
+                    var isControlled = int.Parse(inputs[5]);
+                    var health = int.Parse(inputs[6]);
+                    var vx = int.Parse(inputs[7]);
+                    var vy = int.Parse(inputs[8]);
+                    var nearBase = int.Parse(inputs[9]);
+                    var threatFor = int.Parse(inputs[10]);
 
                     var entity = Entity.GetById(id);
                     if (entity == null)
@@ -99,9 +96,9 @@
 
         public class UnitController
         {
-            private IEnumerable<Vector2> AttackNodes = EnemyBase.GetAttackNodes();
+            private readonly IEnumerable<Vector2> AttackNodes = EnemyBase.GetAttackNodes();
 
-            private List<BasePlayable> Playables = new List<BasePlayable>();
+            private readonly List<BasePlayable> Playables = new List<BasePlayable>();
             private int stage = 0;
             private int iteration;
 
@@ -184,20 +181,20 @@
             public Base(string initInput)
             {
                 var inputs = initInput.Split(' ');
-                int x = int.Parse(inputs[0]);
-                int y = int.Parse(inputs[1]);
+                var x = int.Parse(inputs[0]);
+                var y = int.Parse(inputs[1]);
 
-                this.Position = new Vector2(x, y);
+                Position = new Vector2(x, y);
             }
 
             public Base(Vector2 position)
             {
-                this.Position = position;
+                Position = position;
             }
 
             public Base OppositeBase()
             {
-                var oppositeVector = Vector2.Abs(this.Position - MapBounds);
+                var oppositeVector = Vector2.Abs(Position - MapBounds);
                 return new Base(oppositeVector);
             }
 
@@ -231,7 +228,7 @@
                 Console.Error.WriteLine($"perimeter {perimeter}");
                 // topleft base
                 double baseDegree;
-                if (this.Position == Vector2.Zero)
+                if (Position == Vector2.Zero)
                 {
                     baseDegree = 15;
                 }
@@ -241,12 +238,12 @@
                 }
 
                 var step = 75d / points;
-                for (int i = 0; i < points; i++)
+                for (var i = 0; i < points; i++)
                 {
                     var degree = baseDegree + (step * i);
                     var degreeRadians = degree * (Math.PI / 180);
-                    var x = (int)Math.Round(this.Position.X + radius * Math.Cos(degreeRadians));
-                    var y = (int)Math.Round(this.Position.Y + radius * Math.Sin(degreeRadians));
+                    var x = (int)Math.Round(Position.X + radius * Math.Cos(degreeRadians));
+                    var y = (int)Math.Round(Position.Y + radius * Math.Sin(degreeRadians));
 
                     var result = new Vector2(x, y);
 
@@ -263,7 +260,7 @@
 
             public static Entity GetById(int id)
             {
-                Lookup.TryGetValue(id, out Entity result);
+                Lookup.TryGetValue(id, out var result);
                 return result;
             }
 
@@ -294,19 +291,19 @@
             {
                 Lookup.Add(id, this);
 
-                this.Id = id;
-                this.Type = (EntityType)type;
+                Id = id;
+                Type = (EntityType)type;
 
                 Update(x, y, shieldLife, isControlled, health, vX, vY, nearBase, threatFor);
             }
 
             public void Update(int x, int y, int shieldLife, int isControlled, int health, int vX, int vY, int nearBase, int threatFor)
             {
-                this.Position = new Vector2(x, y);
-                this.ShieldLeft = shieldLife;
-                this.IsControlled = isControlled != 0;
-                this.Health = health;
-                this.Speed = new Vector2(vX, vY);
+                Position = new Vector2(x, y);
+                ShieldLeft = shieldLife;
+                IsControlled = isControlled != 0;
+                Health = health;
+                Speed = new Vector2(vX, vY);
 
                 if (ShieldDelay > 0)
                 {
@@ -345,15 +342,15 @@
                         break;
                 }
 
-                this.ThreatenedBase = threatenedBase;
+                ThreatenedBase = threatenedBase;
 
                 if (nearBase == 1)
                 {
-                    this.TargetedBase = threatenedBase;
+                    TargetedBase = threatenedBase;
                 }
                 else
                 {
-                    this.TargetedBase = null;
+                    TargetedBase = null;
                 }
             }
         }
@@ -365,7 +362,7 @@
 
             protected Command(string message)
             {
-                this.Message = message;
+                Message = message;
             }
 
             public abstract string ConvertToString();
@@ -385,7 +382,7 @@
             public MoveCommand(Vector2 destination)
                 : base($"Moving to [{destination.X},{destination.Y}]")
             {
-                this.Destination = destination;
+                Destination = destination;
             }
 
             public override string ConvertToString()
@@ -404,15 +401,15 @@
             public AttackCommand(Entity entity)
                 : base($"Attackimg {entity.Type} {entity.Id}")
             {
-                this.Entity = entity;
+                Entity = entity;
 
                 if (entity.Type == EntityType.Monster)
                 {
-                    this.Destination = entity.NextPosition;
+                    Destination = entity.NextPosition;
                 }
                 else
                 {
-                    this.Destination = entity.Position;
+                    Destination = entity.Position;
                 }
             }
 
@@ -444,7 +441,7 @@
             protected SpellCommand(SpellType type, string message)
                 : base(message)
             {
-                this.Type = type;
+                Type = type;
             }
         }
 
@@ -455,8 +452,8 @@
             public WindSpell(Vector2 destination)
                 : base(SpellType.Wind, $"Casting WIND towards {destination}")
             {
-                int x = (int)destination.X;
-                int y = (int)destination.Y;
+                var x = (int)destination.X;
+                var y = (int)destination.Y;
 
                 if (x == 0)
                 {
@@ -476,12 +473,12 @@
                     y = (int)MapBounds.Y - 5;
                 }
 
-                this.Destination = new Vector2(x, y);
+                Destination = new Vector2(x, y);
             }
 
             public override string ConvertToString()
             {
-                return $"{Keyword} {this.Type.ToString().ToUpper()} {Destination.X} {Destination.Y} {Message}";
+                return $"{Keyword} {Type.ToString().ToUpper()} {Destination.X} {Destination.Y} {Message}";
             }
         }
 
@@ -492,12 +489,12 @@
             public ShieldSpell(int entityId)
                 : base(SpellType.Shield, $"Casting SHIELD at entity {entityId}")
             {
-                this.EntityId = entityId;
+                EntityId = entityId;
             }
 
             public override string ConvertToString()
             {
-                return $"{Keyword} {this.Type.ToString().ToUpper()} {EntityId} {Message}";
+                return $"{Keyword} {Type.ToString().ToUpper()} {EntityId} {Message}";
             }
         }
 
@@ -509,13 +506,13 @@
             public ControlSpell(int entityId, Vector2 destination)
                 : base(SpellType.Control, $"Casting CONTROL at entity {entityId} towards {destination}")
             {
-                this.EntityId = entityId;
-                this.Destination = destination;
+                EntityId = entityId;
+                Destination = destination;
             }
 
             public override string ConvertToString()
             {
-                return $"{Keyword} {this.Type.ToString().ToUpper()} {EntityId} {Destination.X} {Destination.Y} {Message}";
+                return $"{Keyword} {Type.ToString().ToUpper()} {EntityId} {Destination.X} {Destination.Y} {Message}";
             }
         }
 
@@ -525,7 +522,7 @@
             private static readonly int EnemyWindRangeSquared = 7150 * 7150;
             private static readonly int EnemyShieldRangeSquared = 4600 * 4600;
 
-            private Dictionary<int, int> BaseMonsterTicks = new Dictionary<int, int>(); // monster id, ticks
+            private readonly Dictionary<int, int> BaseMonsterTicks = new Dictionary<int, int>(); // monster id, ticks
 
             private int stage = 0;
 
@@ -540,7 +537,7 @@
                     stage = Math.Max(stage, max);
                 }
 
-                for (int i = BaseMonsterTicks.Count - 1; i >= 0; i--)
+                for (var i = BaseMonsterTicks.Count - 1; i >= 0; i--)
                 {
                     var tickPair = BaseMonsterTicks.ElementAt(i);
 
@@ -663,7 +660,7 @@
             public Midfielder(Entity hero, int aggressionRange, IEnumerable<Vector2> patrolPoints, IEnumerable<Vector2> attackPoints)
                 : base(hero, patrolPoints, attackPoints)
             {
-                this.AggressionRangeSquared = aggressionRange * aggressionRange;
+                AggressionRangeSquared = aggressionRange * aggressionRange;
             }
 
             public override Command Update(int mana, IEnumerable<Entity> monsters, IEnumerable<Entity> opponents)
@@ -847,9 +844,9 @@
 
             public BasePlayable(Entity hero, IEnumerable<Vector2> patrolPoints, IEnumerable<Vector2> attackPoints)
             {
-                this.Hero = hero;
-                this.PatrolPoints = new LinkedList<Vector2>(patrolPoints);
-                this.AttackPoints = new LinkedList<Vector2>(attackPoints);
+                Hero = hero;
+                PatrolPoints = new LinkedList<Vector2>(patrolPoints);
+                AttackPoints = new LinkedList<Vector2>(attackPoints);
             }
 
             public abstract Command Update(int mana, IEnumerable<Entity> monsters, IEnumerable<Entity> opponents);

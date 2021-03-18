@@ -1,42 +1,39 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Numerics;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Codingame
 {
-    class SkynetRevolution
+    internal class SkynetRevolution
     {
-        static void Main(string[] args)
+        private static void Main(string[] args)
         {
             var inputs = Console.ReadLine().Split(' ');
-            int N = int.Parse(inputs[0]); // the total number of nodes in the level, including the gateways
-            int L = int.Parse(inputs[1]); // the number of links
-            int E = int.Parse(inputs[2]); // the number of exit gateways
+            var N = int.Parse(inputs[0]); // the total number of nodes in the level, including the gateways
+            var L = int.Parse(inputs[1]); // the number of links
+            var E = int.Parse(inputs[2]); // the number of exit gateways
 
-            for (int i = 0; i < L; i++)
+            for (var i = 0; i < L; i++)
             {
                 inputs = Console.ReadLine().Split(' ');
-                int N1 = int.Parse(inputs[0]); // N1 and N2 defines a link between these nodes
-                int N2 = int.Parse(inputs[1]);
+                var N1 = int.Parse(inputs[0]); // N1 and N2 defines a link between these nodes
+                var N2 = int.Parse(inputs[1]);
 
                 var firstNode = Node.GetById(N1);
                 var secondNode = Node.GetById(N2);
 
                 Node.Link(firstNode, secondNode);
             }
-            for (int i = 0; i < E; i++)
+            for (var i = 0; i < E; i++)
             {
-                int EI = int.Parse(Console.ReadLine()); // the index of a gateway node
+                var EI = int.Parse(Console.ReadLine()); // the index of a gateway node
                 Node.GetById(EI).IsGateWay = true;
             }
 
             // game loop
             while (true)
             {
-                int SI = int.Parse(Console.ReadLine()); // The index of the node on which the Skynet agent is positioned this turn
+                var SI = int.Parse(Console.ReadLine()); // The index of the node on which the Skynet agent is positioned this turn
 
                 var link = FindBestLink(Node.GetById(SI));
 
@@ -201,7 +198,7 @@ namespace Codingame
             return (selection.Id, gateway.Id);
         }
 
-        class Node
+        private class Node
         {
             private static readonly Dictionary<int, Node> Lookup = new Dictionary<int, Node>();
 
@@ -250,8 +247,8 @@ namespace Codingame
 
             public Node(int id)
             {
-                this.Id = id;
-                this.Neighbours = new List<Node>();
+                Id = id;
+                Neighbours = new List<Node>();
 
                 Lookup.Add(id, this);
             }
@@ -263,17 +260,17 @@ namespace Codingame
                     return false;
                 }
 
-                return this.Id == node.Id;
+                return Id == node.Id;
             }
 
             public override bool Equals(object obj)
             {
-                return this.Equals(obj as Node);
+                return Equals(obj as Node);
             }
 
             public override int GetHashCode()
             {
-                return this.Id.GetHashCode();
+                return Id.GetHashCode();
             }
         }
     }
