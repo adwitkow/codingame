@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Codingame
 {
-    class Game
+    class MarsLander
     {
         public static readonly double Gravity = 3.711d;
         public static Vector2 LandingPoint1 = Vector2.Zero;

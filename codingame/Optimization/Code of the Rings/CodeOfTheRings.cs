@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Codingame
 {
-    class Game
+    class CodeOfTheRings
     {
         static void Main(string[] args)
         {
