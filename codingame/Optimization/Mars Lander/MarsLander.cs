@@ -36,7 +36,7 @@ namespace Codingame
                         LandingPoint2 = currentPoint;
                     }
                 }
-                
+
                 LandPoints.Add(currentPoint);
             }
 
@@ -133,6 +133,11 @@ namespace Codingame
                     angle = -22;
                 }
 
+                if (Position.Y - LandingPoint1.Y < 20)
+                {
+                    angle = 0;
+                }
+
                 var hSpeedAbs = Math.Abs(Speed.X); // TODO
 
                 return $"{angle} {power}";
@@ -144,7 +149,7 @@ namespace Codingame
                 {
                     return false;
                 }
-                
+
                 return Rotation == 0 && Math.Abs(Speed.X) < MaxSpeed.X && Math.Abs(Speed.Y) < MaxSpeed.Y;
             }
 
@@ -178,7 +183,7 @@ namespace Codingame
                     angle = -35;
                 }
 
-                if (Position.Y > 2900 && Speed.Y > 0)
+                if ((Position.Y > 2900 && Speed.Y > 0) || (Math.Abs(Speed.X) > 25 && Math.Abs(Speed.Y) < 3))
                 {
                     power = 0;
                 }
