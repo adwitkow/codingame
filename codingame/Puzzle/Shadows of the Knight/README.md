@@ -1,3 +1,3 @@
 ﻿https://www.codingame.com/ide/puzzle/shadows-of-the-knight-episode-1
 
-Man, I love C# lambdas
+This solution is not exactly elegant, but it works well and handles huge maps in reasonable time per action.
