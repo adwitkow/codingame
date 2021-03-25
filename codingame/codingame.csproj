@@ -32,6 +32,9 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject>Codingame.AneoSponsoredPuzzle</StartupObject>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -52,7 +55,7 @@
     <Compile Include="Optimization\CodinGame Sponsored Contest\CodinGameSponsoredContest.cs" />
     <Compile Include="Optimization\Mars Lander\MarsLander.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Puzzle\Shadows of the Knight\ShadowsOfTheKnight.cs" />
+    <Compile Include="Puzzle\ANEO Sponsored Puzzle\AneoSponsoredPuzzle.cs" />
     <Compile Include="Puzzle\Skynet Revolution\SkynetRevolution.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -62,9 +65,11 @@
     <None Include="Optimization\Code of the Rings\README.md" />
     <None Include="Optimization\Mars Lander\README.md" />
     <None Include="packages.config" />
-    <None Include="Puzzle\Shadows of the Knight\README.md" />
+    <None Include="Puzzle\ANEO Sponsored Puzzle\README.md" />
     <None Include="Puzzle\Skynet Revolution\README.md" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Puzzle\Shadows of the Knight\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
