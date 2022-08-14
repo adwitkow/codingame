@@ -51,6 +51,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Bots\CodeRoyale.cs" />
     <Compile Include="Contests\Capgemini Fall In Love With IA\FallInLoveWithIA.cs" />
     <Compile Include="Optimization\Code of the Rings\CodeOfTheRings.cs" />
     <Compile Include="Optimization\CodinGame Sponsored Contest\CodinGameSponsoredContest.cs" />
