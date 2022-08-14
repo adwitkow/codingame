@@ -14,6 +14,7 @@ class Player
 {
     private const int MapWidth = 1920;
     private const int MapHeight = 1000;
+    private static Vector2 MapMiddle = new Vector2(MapWidth / 2, MapHeight / 2);
 
     static void Main(string[] args)
     {
@@ -339,34 +340,6 @@ class Player
         }
     }
 
-    private enum StructureType
-    {
-        None = -1,
-        Goldmine = 0,
-        Tower = 1,
-        Barracks = 2
-    }
-
-    private enum Owner
-    {
-        None = -1,
-        Friendly = 0,
-        Enemy = 1
-    }
-
-    private enum CreepType
-    {
-        Queen = -1,
-        Knight = 0,
-        Archer = 1,
-        Giant = 2
-    }
-
-    private interface ILocatable
-    {
-        Vector2 Position { get; set; }
-    }
-
     public static class Costs
     {
         public const int Knight = 80;
@@ -385,4 +358,32 @@ class Player
     {
         return locatables.OrderBy(loc => Vector2.DistanceSquared(loc.Position, position));
     }
+}
+
+enum StructureType
+{
+    None = -1,
+    Goldmine = 0,
+    Tower = 1,
+    Barracks = 2
+}
+
+enum Owner
+{
+    None = -1,
+    Friendly = 0,
+    Enemy = 1
+}
+
+enum CreepType
+{
+    Queen = -1,
+    Knight = 0,
+    Archer = 1,
+    Giant = 2
+}
+
+interface ILocatable
+{
+    Vector2 Position { get; set; }
 }
