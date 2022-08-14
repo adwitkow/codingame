@@ -1,6 +1,6 @@
 ﻿using System.Numerics;
 
-interface ILocatable
+public interface ILocatable
 {
     Vector2 Position { get; set; }
 }

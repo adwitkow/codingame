@@ -12,6 +12,8 @@ public class Site : ILocatable
         this.Id = site.Id;
         this.Position = site.Position;
         this.Radius = site.Radius;
+        this.Gold = site.Gold;
+        this.MaxMineSize = site.MaxMineSize;
         this.Type = site.Type;
         this.Owner = site.Owner;
         this.Param1 = site.Param1;
