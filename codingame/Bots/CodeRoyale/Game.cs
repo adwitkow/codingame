@@ -10,7 +10,7 @@ using System.Numerics;
  * Auto-generated code below aims at helping you parse
  * the standard input according to the problem statement.
  **/
-class Player
+partial class Game
 {
     private const int MapWidth = 1920;
     private const int MapHeight = 1000;
@@ -229,124 +229,6 @@ class Player
         }
     }
 
-    private class Site : ILocatable
-    {
-        public Site()
-        {
-
-        }
-
-        public Site(Site site)
-        {
-            this.Id = site.Id;
-            this.Position = site.Position;
-            this.Radius = site.Radius;
-            this.Type = site.Type;
-            this.Owner = site.Owner;
-            this.Param1 = site.Param1;
-            this.Param2 = site.Param2;
-        }
-
-        public int Id { get; set; }
-
-        public Vector2 Position { get; set; }
-
-        public int Radius { get; set; }
-
-        public int Gold { get; set; }
-
-        public int MaxMineSize { get; set; }
-
-        public StructureType Type { get; set; }
-
-        public Owner Owner { get; set; }
-
-        public int Param1 { protected get; set; }
-
-        public int Param2 { protected get; set; }
-    }
-
-    private class Barracks : Site
-    {
-        public Barracks(Site site) : base(site)
-        {
-        }
-
-        public int TrainingCooldown => Param1;
-
-        public CreepType CreepType => (CreepType)Param2;
-    }
-
-    private class Mine : Site
-    {
-        public Mine(Site site) : base(site)
-        {
-        }
-
-        public int IncomeRate => Param1;
-    }
-
-    private class Tower : Site
-    {
-        public Tower(Site site) : base(site)
-        {
-        }
-
-        public int Health => Param1;
-
-        public int AttackRadius => Param2;
-    }
-
-    private struct Unit : ILocatable
-    {
-        public Vector2 Position { get; set; }
-
-        public Owner Owner { get; set; }
-
-        public CreepType CreepType { get; set; }
-
-        public int Health { get; set; }
-
-        public static bool operator ==(Unit a, Unit b)
-        {
-            return a.Equals(b);
-        }
-
-        public static bool operator !=(Unit a, Unit b)
-        {
-            return !a.Equals(b);
-        }
-    }
-
-    private class Roster
-    {
-        public Roster(Owner owner)
-        {
-            this.Owner = owner;
-        }
-
-        public Owner Owner { get; }
-
-        public Unit Queen { get; set; }
-
-        public List<Unit> Knights { get; set; } = new List<Unit>();
-
-        public List<Unit> Archers { get; set; } = new List<Unit>();
-
-        internal void Clear()
-        {
-            Knights.Clear();
-            Archers.Clear();
-        }
-    }
-
-    public static class Costs
-    {
-        public const int Knight = 80;
-
-        public const int Archer = 100;
-    }
-
     private static IOrderedEnumerable<T> OrderByDistance<T>(IEnumerable<T> locatables, ILocatable locatable)
         where T : ILocatable
     {
@@ -358,32 +240,4 @@ class Player
     {
         return locatables.OrderBy(loc => Vector2.DistanceSquared(loc.Position, position));
     }
-}
-
-enum StructureType
-{
-    None = -1,
-    Goldmine = 0,
-    Tower = 1,
-    Barracks = 2
-}
-
-enum Owner
-{
-    None = -1,
-    Friendly = 0,
-    Enemy = 1
-}
-
-enum CreepType
-{
-    Queen = -1,
-    Knight = 0,
-    Archer = 1,
-    Giant = 2
-}
-
-interface ILocatable
-{
-    Vector2 Position { get; set; }
 }
