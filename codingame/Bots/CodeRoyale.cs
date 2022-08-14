@@ -17,9 +17,6 @@ class Player
 
     static void Main(string[] args)
     {
-        var startX = -1;
-        var startY = -1;
-
         string[] inputs;
         int numSites = int.Parse(Console.ReadLine());
 
@@ -58,40 +55,10 @@ class Player
             int gold = int.Parse(inputs[0]);
             int touchedSiteId = int.Parse(inputs[1]); // -1 if none
 
-            Site touchedSite;
-            if (touchedSiteId == -1)
-            {
-                touchedSite = null;
-            }
-            else
-            {
-                touchedSite = sites[touchedSiteId];
-            }
             UpdateSites(inputs, numSites, sites);
             PopulateRosters(friendlyRoster, enemyRoster);
 
             var friendlyQueen = friendlyRoster.Queen;
-
-            if (startX == -1 && startY == -1)
-            {
-                if (friendlyQueen.Position.X > MapWidth / 2)
-                {
-                    startX = MapWidth;
-                }
-                else
-                {
-                    startX = 0;
-                }
-
-                if (friendlyQueen.Position.Y > MapHeight / 2)
-                {
-                    startY = MapHeight;
-                }
-                else
-                {
-                    startY = 0;
-                }
-            }
 
             var enemyQueen = enemyRoster.Queen;
             var buildableSitesByDistance = OrderByDistance(sites, friendlyQueen)
@@ -109,6 +76,7 @@ class Player
                 .Where(b => b.Owner == Owner.Friendly);
             var shouldBuildKnightBarracks = !allFriendlyBarracks.Any(b => b.CreepType == CreepType.Knight);
             var shouldBuildArcherBarracks = !allFriendlyBarracks.Any(b => b.CreepType == CreepType.Archer);
+            var closestBuildableSite = buildableSitesByDistance.FirstOrDefault(site => site.Owner != Owner.Friendly || (site is Mine mine && mine.IncomeRate < mine.MaxMineSize));
 
             string buildingToBuild;
             if (shouldBuildArcherBarracks)
@@ -121,10 +89,9 @@ class Player
             }
             else
             {
-                buildingToBuild = "TOWER";
+                buildingToBuild = "MINE";
             }
 
-            var closestBuildableSite = buildableSitesByDistance.FirstOrDefault(site => site.Owner != Owner.Friendly);
             var trainableSites = allFriendlyBarracks
                 .Where(b => b.TrainingCooldown == 0);
             var orderedTrainableSites = OrderByDistance(trainableSites, enemyQueen);
@@ -134,7 +101,8 @@ class Player
 
             if (closestBuildableSite is null)
             {
-                Console.WriteLine($"MOVE {startX} {startY}");
+                // move to the closest tower
+                Console.WriteLine($"MOVE 0 0");
             }
             else if (closestEnemyKnight != default && Vector2.Distance(closestEnemyKnight.Position, friendlyQueen.Position) < 500)
             {
@@ -168,10 +136,10 @@ class Player
         {
             inputs = Console.ReadLine().Split(' ');
             int siteId = int.Parse(inputs[0]);
-            int ignore1 = int.Parse(inputs[1]); // used in future leagues
-            int ignore2 = int.Parse(inputs[2]); // used in future leagues
-            StructureType structureType = (StructureType)int.Parse(inputs[3]); // -1 = No structure, 2 = Barracks
-            int owner = int.Parse(inputs[4]); // -1 = No structure, 0 = Friendly, 1 = Enemy
+            int gold = int.Parse(inputs[1]);
+            int maxMineSize = int.Parse(inputs[2]);
+            StructureType structureType = (StructureType)int.Parse(inputs[3]);
+            int owner = int.Parse(inputs[4]);
             int param1 = int.Parse(inputs[5]);
             int param2 = int.Parse(inputs[6]);
 
@@ -184,6 +152,12 @@ class Player
                     case StructureType.None:
                         site = new Site(site);
                         break;
+                    case StructureType.Goldmine:
+                        site = new Mine(site);
+                        break;
+                    case StructureType.Tower:
+                        site = new Tower(site);
+                        break;
                     case StructureType.Barracks:
                         site = new Barracks(site);
                         break;
@@ -194,6 +168,8 @@ class Player
                 site.Type = structureType;
             }
 
+            site.Gold = gold;
+            site.MaxMineSize = maxMineSize;
             site.Owner = (Owner)owner;
             site.Param1 = param1;
             site.Param2 = param2;
@@ -276,13 +252,17 @@ class Player
 
         public int Radius { get; set; }
 
+        public int Gold { get; set; }
+
+        public int MaxMineSize { get; set; }
+
         public StructureType Type { get; set; }
 
         public Owner Owner { get; set; }
 
-        public int Param1 { get; set; }
+        public int Param1 { protected get; set; }
 
-        public int Param2 { get; set; }
+        public int Param2 { protected get; set; }
     }
 
     private class Barracks : Site
@@ -294,6 +274,26 @@ class Player
         public int TrainingCooldown => Param1;
 
         public CreepType CreepType => (CreepType)Param2;
+    }
+
+    private class Mine : Site
+    {
+        public Mine(Site site) : base(site)
+        {
+        }
+
+        public int IncomeRate => Param1;
+    }
+
+    private class Tower : Site
+    {
+        public Tower(Site site) : base(site)
+        {
+        }
+
+        public int Health => Param1;
+
+        public int AttackRadius => Param2;
     }
 
     private struct Unit : ILocatable
@@ -358,7 +358,8 @@ class Player
     {
         Queen = -1,
         Knight = 0,
-        Archer = 1
+        Archer = 1,
+        Giant = 2
     }
 
     private interface ILocatable
