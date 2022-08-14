@@ -46,20 +46,17 @@ void WriteProjectToFile(DirectoryInfo projectDirectory, string categoryName)
             {
                 writer.WriteLine($"using {usingPath};");
             }
+
             writer.WriteLine();
 
-            CombineSourceFiles(projectDirectory.GetFiles(), writer);
-
-            foreach (var directory in projectDirectory.GetDirectories())
-            {
-                CombineSourceFiles(directory.GetFiles(), writer);
-            }
+            CombineSourceFiles(projectDirectory, writer);
         }
     }
 }
 
-void CombineSourceFiles(FileInfo[] files, StreamWriter writer)
+void CombineSourceFiles(DirectoryInfo directoryInfo, StreamWriter writer)
 {
+    var files = directoryInfo.GetFiles();
     foreach (var file in files)
     {
         var lines = File.ReadAllLines(file.FullName);
@@ -73,6 +70,11 @@ void CombineSourceFiles(FileInfo[] files, StreamWriter writer)
 
             writer.WriteLine(line);
         }
+    }
+
+    foreach (var directory in directoryInfo.GetDirectories())
+    {
+        CombineSourceFiles(directory, writer);
     }
 }
 
@@ -125,6 +127,8 @@ IEnumerable<string> CollectFiles(DirectoryInfo projectDirectory)
         {
             allFiles.Add(file.FullName);
         }
+
+        allFiles.AddRange(CollectFiles(directory));
     }
 
     return allFiles;
