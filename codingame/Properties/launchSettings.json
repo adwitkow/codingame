@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "Codingame.Console": {
+      "commandName": "Project",
+      "commandLineArgs": "..\\..\\..\\"
+    }
+  }
+}
