@@ -1,4 +1,5 @@
-﻿using System.Text.RegularExpressions;
+﻿using System.Diagnostics;
+using System.Text.RegularExpressions;
 
 const string Output = "Output";
 Regex UsingRegex = new Regex(@"using (?<using>[^\(].*);");
@@ -23,6 +24,8 @@ foreach (var categoryDirectory in directoryInfo.GetDirectories())
         WriteProjectToFile(projectDirectory, categoryDirectory.Name);
     }
 }
+
+Process.Start("explorer.exe", Directory.GetCurrentDirectory());
 
 void WriteProjectToFile(DirectoryInfo projectDirectory, string categoryName)
 {

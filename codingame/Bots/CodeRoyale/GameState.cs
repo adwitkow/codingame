@@ -46,6 +46,9 @@
             case CreepType.Archer:
                 roster.Archers.Add(unit);
                 break;
+            case CreepType.Giant:
+                roster.Giants.Add(unit);
+                break;
         }
     }
 }
